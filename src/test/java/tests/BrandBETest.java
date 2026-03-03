@@ -6,34 +6,39 @@ import io.restassured.specification.RequestSpecification;
 import models.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import services.BrandService;
+import services.UserService;
 
 public class BrandBETest {
     @Test
-    public void brandTest() {
+    public void BrandDETest() {
+        //Pasul 1: Creem un brand
+        RequestBrandModel requestBody = new RequestBrandModel("Brand", "Testing");
 
-        RestAssured.baseURI = "https://api.practicesoftwaretesting.com";
-        RequestSpecification request = RestAssured.given();
-        request.header("Content-type", "application/json");
-        request.header("Accept", "application/json");
+        BrandService brandService = new BrandService();
+        ResponseBrandModel responseBody = brandService.createBrand(requestBody);
+
+        //Pasul 2: Verificam daca s-a creat brandul
+        brandService.checkSpecificBrand(responseBody.getId(), 200);
+
+        //Pasul 3: Modificam un brand
+        RequestBrandModel requestBody3 = new RequestBrandModel("Ralu", "Testing" );
+        brandService.modifySpecificBrand(requestBody3, responseBody.getId());
 
 
-        //Pasul 1 Creem un Brand
-        System.out.println("STEP 1: CREATE NEW BRAND");
+        //Pasul 4: Verificam ca s-a modificat un brand
+        brandService.checkSpecificBrand(responseBody.getId(),200);
 
-        RequestBrandModel requestBody = new RequestBrandModel("Brand", "Testing" );
+        //Pasul 5: Logam user admin
+        UserService userService = new UserService();
+        RequestUserLoginModel requestAdminBody = new RequestUserLoginModel("admin@practicesoftwaretesting.com", "welcome01");
+        ResponseUserLoginModel responseAdminBody = userService.loginUser(requestAdminBody);
 
-        request.body(requestBody);
-        Response response = request.post("/brands");
-        System.out.println(response.getStatusLine());
-        response.body().prettyPrint();
-        ResponseBrandModel responseBody = response.getBody().as(ResponseBrandModel.class);
-        Assert.assertEquals(response.getStatusCode(), 201);
+        //Pasul 6: Stergem brandul
+        brandService.deleteSpecificBrand(responseAdminBody.getAccess_token(), responseBody.getId());
 
-        //Pasul 2: Verificam ca s-a creat brandul
-        System.out.println("STEP 2: CHECK BRAND REQUEST");
-        Response response2 = request.get("/brands/"+ responseBody.getId());
-        System.out.println(response2.getStatusLine());
-        response2.body().prettyPrint();
-        Assert.assertEquals(response2.getStatusCode(), 200);
+        //Pasul 7 Verificam ca brandul s-a sters
+        brandService.checkSpecificBrand(responseBody.getId(),404);
+
     }
 }
