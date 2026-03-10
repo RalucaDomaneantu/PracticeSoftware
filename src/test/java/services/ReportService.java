@@ -5,6 +5,8 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.testng.Assert;
+import types.EndpointType;
+import types.RequestMethodType;
 
 public class ReportService {
     public void generateAvarageSalesPerMonthReport(String token){
@@ -12,7 +14,7 @@ public class ReportService {
         System.out.println("STEP 2: GENERATE RAPORT");
         RequestSpecification request = RestAssured.given();
         request.header("Authorization", "Bearer " +  token);
-        Response response2 = performRequest("GET",request,"/reports/average-sales-per-month");
+        Response response2 = performRequest(RequestMethodType.REQUEST_GET,request, EndpointType.REPORTS_AVERAGE_SALES_ENDPOINT);
         System.out.println(response2.getStatusLine());
         response2.body().prettyPrint();
         Assert.assertEquals(response2.getStatusCode(), 200);
