@@ -8,6 +8,7 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 import services.BrandService;
 import services.UserService;
+import types.ResponseStatusType;
 
 public class BrandBETest {
     @Test
@@ -19,7 +20,7 @@ public class BrandBETest {
         ResponseBrandModel responseBody = brandService.createBrand(requestBody);
 
         //Pasul 2: Verificam daca s-a creat brandul
-        brandService.checkSpecificBrand(responseBody.getId(), 200);
+        brandService.checkSpecificBrand(responseBody.getId(), ResponseStatusType.RESPONSE_OK);
 
         //Pasul 3: Modificam un brand
         RequestBrandModel requestBody3 = new RequestBrandModel("Ralu", "Testing" );
@@ -27,7 +28,7 @@ public class BrandBETest {
 
 
         //Pasul 4: Verificam ca s-a modificat un brand
-        brandService.checkSpecificBrand(responseBody.getId(),200);
+        brandService.checkSpecificBrand(responseBody.getId(),ResponseStatusType.RESPONSE_OK);
 
         //Pasul 5: Logam user admin
         UserService userService = new UserService();
@@ -38,7 +39,7 @@ public class BrandBETest {
         brandService.deleteSpecificBrand(responseAdminBody.getAccess_token(), responseBody.getId());
 
         //Pasul 7 Verificam ca brandul s-a sters
-        brandService.checkSpecificBrand(responseBody.getId(),404);
+        brandService.checkSpecificBrand(responseBody.getId(),ResponseStatusType.RESPONSE_NOT_FOUND);
 
     }
 }
