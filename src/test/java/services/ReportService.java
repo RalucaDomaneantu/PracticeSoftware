@@ -8,19 +8,19 @@ import org.testng.Assert;
 import types.EndpointType;
 import types.RequestMethodType;
 import types.ResponseStatusType;
+import utils.LogUtility;
 
-public class ReportService {
+public class ReportService extends CommonService{
     public void generateAvarageSalesPerMonthReport(String token){
         //Pasul 2: Generam raportul de vanzari medii pe luna
-        System.out.println("STEP 2: GENERATE RAPORT");
+        LogUtility.infoLog("STEP 2: GENERATE RAPORT");
         RequestSpecification request = RestAssured.given();
         request.header("Authorization", "Bearer " +  token);
-        Response response2 = performRequest(RequestMethodType.REQUEST_GET,request, EndpointType.REPORTS_AVERAGE_SALES_ENDPOINT);
-        System.out.println(response2.getStatusLine());
-        response2.body().prettyPrint();
-        Assert.assertEquals(response2.getStatusCode(), ResponseStatusType.RESPONSE_OK);
+
+        Response response = performRequest(RequestMethodType.REQUEST_GET,request, EndpointType.REPORTS_AVERAGE_SALES_ENDPOINT);
+        LogUtility.infoLog(response.getStatusLine());
+        LogUtility.infoLog(response.getBody().asPrettyString());
+        Assert.assertEquals(response.getStatusCode(), ResponseStatusType.RESPONSE_OK);
     }
-    private Response performRequest(String requestType, RequestSpecification request, String endpoint){
-        return new RestClient().performRequest(requestType, request,endpoint);
-    }
+
 }
