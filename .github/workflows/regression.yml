@@ -19,9 +19,11 @@ jobs:
           cache: maven
 
       - name: Run automation tests
-        run: |
-          mvn clean install
-          mvn allure:report
+        run: mvn clean install
+
+      - name: Generate tests results
+        if: always()
+        run: mvn allure:report
 
       - name: Publish test results
         if: always()
