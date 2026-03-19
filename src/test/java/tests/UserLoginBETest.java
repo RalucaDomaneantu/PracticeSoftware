@@ -1,5 +1,7 @@
 package tests;
 
+import database.DatabaseConnection;
+import database.UserTable;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
 import io.restassured.RestAssured;
@@ -25,6 +27,10 @@ public class UserLoginBETest extends SharedData {
 
         UserService userService = new UserService();
         ResponseUserModel responseBody = userService.createUser(requestBody);
+
+        //Inseram datele in baza de data in tabelul user
+        UserTable userTable = new UserTable();
+        userTable.insertUserIntoTable(requestBody);
 
         //Pasul 2: Ne logam cu userul creat
         ResponseUserLoginModel responseLoginBody = userService.loginUser(requestBody);
